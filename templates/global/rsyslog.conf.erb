@@ -1,0 +1,10 @@
+# THIS FILE IS MANAGED BY PUPPET
+$IncludeConfig <%= conf_dir %>/*.conf
+$umask 0000
+$DirCreateMode 0640
+$FileCreateMode 0640
+$FileOwner <%= rsyslog_user %>
+$FileGroup <%= rsyslog_group %>
+$DirOwner <%= rsyslog_user %>
+$DirGroup <%= rsyslog_group %>
+$RepeatedMsgReduction on
