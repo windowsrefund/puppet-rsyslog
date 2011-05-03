@@ -23,6 +23,7 @@ Create a udp server:
 Create a udp client:
 
     $my_loghost = '192.168.0.1'
+
     include rsyslog::client::udp
 
 Create a tcp server on port 583 (non-standard) and ensure no udp configuration exists:
@@ -35,6 +36,7 @@ Create a tcp server on port 583 (non-standard) and ensure no udp configuration e
 Create a tcp client:
 
     $my_loghost = '192.168.0.1'
+
     include rsyslog::client::tcp
 
 Credits
