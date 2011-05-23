@@ -1,0 +1,37 @@
+# This module allows for various client and server configurations of rsyslog
+#
+# Features:
+#
+# * UDP, TCP and RELP protocol support
+# * outchannels and templates
+# * IPTables support for servers (requires the iptables type)
+# * Multiple servers can be deployed onto a node using various protocol/port specifications.
+#
+# 3 wrapper classes have been provided to support a sane 3-tier logging framework:
+#
+# rsyslog::bottom
+#
+# This class forwards all logs to $my_loghost over RELP.
+#
+# rsyslog::middle
+#
+# This class sets up a 3 servers 
+#	- udp/514
+#	- tcp/10514
+#	- relp/20514
+#
+# The iptables rules are modified to accept appropriate traffic for each instance. 
+# Logs are stored in /var/log/hosts/messages which is rotated to
+# /var/log/hosts/messages.1 upon reaching 50mb. This class also sets up log forwarding
+# of all logs to $my_loghost using the RELP protocol.
+#
+# rsyslog::top
+#
+# This class sets up a server which accepts RELP traffic on
+# port 20514. The server's iptables rules are modified to accept
+# appropriate TCP traffic and logs are stored in dynamically created
+# directories under /var/log/hosts according to the client's hostname
+# and the current date.
+#
+# If needed, more flexible servers and clients can be created by using
+# the rsyslog::client and rsyslog::server definitions directly.

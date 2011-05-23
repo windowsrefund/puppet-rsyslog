@@ -1,0 +1,15 @@
+# THIS FILE IS MANAGED BY PUPPET
+#
+# Templates, Output Channels, and Rule sets must be defined before they can be used
+$IncludeConfig <%= scope.lookupvar('rsyslog::params::conf_dir') %>/templates.conf
+$IncludeConfig <%= scope.lookupvar('rsyslog::params::conf_dir') %>/outchannels.conf
+$ModLoad im<%= proto %>
+<% if proto != 'relp' -%>
+<% if has_variable?('binder') and has_variable?('rule') then -%>
+<%= binder %> <%= rule %>
+<% end -%>
+<% end -%>
+$<%= listener %> <%= listener_port %>
+<%= filter %> <% if outchannel != '' then %>$<%= outchannel %>;<% else %>?<% end %><%= templ.join(';') %>
+# Discard the message to avoid duplicates
+& ~

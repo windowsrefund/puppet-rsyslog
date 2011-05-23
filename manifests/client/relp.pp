@@ -1,8 +1,8 @@
-class rsyslog::client::tcp {
+class rsyslog::client::relp {
 
 	if $my_loghost {
 
-		rsyslog::client { tcp: }
+		rsyslog::client { relp: }
 
 	} else {
 

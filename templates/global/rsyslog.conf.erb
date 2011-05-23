@@ -1,10 +1,24 @@
 # THIS FILE IS MANAGED BY PUPPET
-$IncludeConfig <%= conf_dir %>/*.conf
-$umask 0000
-$DirCreateMode 0640
+# http://www.rsyslog.com/doc/rsyslog_conf_global.html
+$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat
+$ActionQueueType LinkedList
+$ActionQueueFileName dbq
+$ActionResumeRetryCount -1
+$MainMsgQueueMaxFileSize 128M
+$MainMsgQueueSaveOnShutdown on
+$WorkDirectory <%= scope.lookupvar('rsyslog::params::work_dir') %>
+$Umask 0022
+$DirCreateMode 0755
 $FileCreateMode 0640
-$FileOwner <%= rsyslog_user %>
-$FileGroup <%= rsyslog_group %>
-$DirOwner <%= rsyslog_user %>
-$DirGroup <%= rsyslog_group %>
+$FileOwner root
+$FileGroup adm
+$DirOwner root
+$DirGroup adm
 $RepeatedMsgReduction on
+$OMFileAsyncWriting on
+$OMFileFlushOnTXEnd on
+$ModLoad imuxsock
+$ModLoad imklog
+$ModLoad immark
+$IncludeConfig <%= scope.lookupvar('rsyslog::params::conf_dir') %>/listener-*.conf
+$IncludeConfig <%= scope.lookupvar('rsyslog::params::conf_dir') %>/sender-*.conf

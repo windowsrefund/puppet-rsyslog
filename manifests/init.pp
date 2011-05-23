@@ -1,44 +1,51 @@
 class rsyslog {
 
-	$conf_dir = '/etc/rsyslog.d'
-	$conf = '/etc/rsyslog.conf'
-	$rsyslog_user = 'rsyslog'
-	$rsyslog_group = 'rsyslog'
+	include rsyslog::params 	
+	include rsyslog::os
 
-	# Each supported client OS goes here
-	case $operatingsystem {
-		debian: { include rsyslog::debian }	
+	package { $rsyslog::params::packages: ensure => present }
+
+	group { $rsyslog::params::group: ensure => present }
+
+	user { $rsyslog::params::user: 
+		ensure => present,
+		gid => $rsyslog::params::group,
+		require => Group[$rsyslog::params::group],
 	}
 
-	group { "$rsyslog_group": ensure => present }
-
-	user { "$rsyslog_user": 
-		ensure => present,
-		gid => $rsyslog_group,
-		require => Group[$rsyslog_group],
+	File {
+		owner => 'root',
+		group => 'root',
 	}
 
 	file { 
-		rsyslog-conf:
-			path => $conf,
+		$rsyslog::params::conf:
 			ensure => present,
-			owner => 'root',
-			group => 'root',
 			mode => 0644,
 			content => template('rsyslog/global/rsyslog.conf.erb'),
-			require => User[$rsyslog_user], 
-			notify => Service[rsyslog-service];
-		rsyslog-d:
-			path => $conf_dir,
+			subscribe => Package[$rsyslog::params::packages];
+		$rsyslog::params::conf_dir:
 			ensure => directory,
-			owner => 'root',
-			group => 'root',
 			mode => 0755;
+		$rsyslog::params::work_dir:
+			ensure => directory,
+			mode => 0755,
+			owner => $rsyslog::params::user,
+			require => User[$rsyslog::params::user]; 
+		outchannels:
+			path => "${rsyslog::params::conf_dir}/outchannels.conf",
+			ensure => present,
+			source => 'puppet:///modules/rsyslog/global/outchannels.conf';
+		templates:
+			path => "${rsyslog::params::conf_dir}/templates.conf",
+			ensure => present,
+			source => 'puppet:///modules/rsyslog/global/templates.conf';
 	}
 
-	service { rsyslog-service:
+	service { $rsyslog::params::service:
 		enable => true,
 		ensure => running,
+		subscribe => File[$rsyslog::params::conf],
 	}
 
 }
