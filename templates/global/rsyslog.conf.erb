@@ -20,5 +20,7 @@ $OMFileFlushOnTXEnd on
 $ModLoad imuxsock
 $ModLoad imklog
 $ModLoad immark
-$IncludeConfig <%= scope.lookupvar('rsyslog::params::conf_dir') %>/listener-*.conf
+# Send upstream if present
 $IncludeConfig <%= scope.lookupvar('rsyslog::params::conf_dir') %>/sender-*.conf
+# Accept from downstream (if present) and stop
+$IncludeConfig <%= scope.lookupvar('rsyslog::params::conf_dir') %>/listener-*.conf
